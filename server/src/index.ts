@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { ErrorHandler } from "./middleware/ErrorHandler";
 import { app, io, server } from "./config/Socket";
+import path from "path";
 
 dotenv.config();
 
@@ -48,6 +49,15 @@ io.on("connection", (socket) => {
     io.emit("getOnlineUsers", Object.keys(onlineUsers));
   });
 });
+
+console.log(process.env.NODE_ENV);
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+  });
+}
 
 server.listen(process.env.PORT, () => {
   console.log(`Server has started on port ${process.env.PORT}`);
