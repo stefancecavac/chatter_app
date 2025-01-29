@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -52,15 +52,12 @@ io.on("connection", (socket) => {
 
 console.log(process.env.NODE_ENV === "production");
 
-const __dirname = path.resolve();
 console.log(__dirname);
 if (process.env.NODE_ENV === "production") {
-  const distPath = path.resolve(__dirname, "../client/dist");
-  console.log("Resolved path to dist folder:", distPath); // Debugging output
+  app.use(express.static(path.join(__dirname, "../../client/dist")));
 
-  app.use(express.static(distPath));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(distPath, "index.html"));
+  app.get("*", (req, res: Response) => {
+    res.sendFile(path.join(__dirname, "../../client/dist", "index.html"));
   });
 }
 
