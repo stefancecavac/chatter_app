@@ -3,11 +3,17 @@ import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-q
 import { useParams } from "react-router-dom";
 import { messageData, responseMessageData, SendMessageData, userData } from "../util/Types";
 
+type customError = {
+  success: boolean;
+  message: string;
+  code: number;
+};
+
 export const useGetChatWitFriend = () => {
   const { receiverId } = useParams();
   const takeParam = 10;
 
-  const getChatWithFriendApi = async ({ pageParam = 0 }) => {
+  const getChatWithFriendApi = async ({ pageParam = 0 }: { pageParam: number }) => {
     const response = await ApiClient.get(`/message/${receiverId}`, {
       params: {
         skip: pageParam,
@@ -24,9 +30,9 @@ export const useGetChatWitFriend = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery({
+  } = useInfiniteQuery<responseMessageData, customError>({
     queryKey: ["chat", receiverId],
-    queryFn: ({ pageParam }) => getChatWithFriendApi({ pageParam }),
+    queryFn: ({ pageParam }) => getChatWithFriendApi({ pageParam: pageParam as number }),
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.messages.length < 10) return undefined;
       return allPages.flatMap((page) => page.messages).length;

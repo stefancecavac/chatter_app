@@ -90,7 +90,7 @@ export const getFriendsWithLastMessageService = async (userId: string) => {
     },
   });
 
-  const userFriends = friends.flatMap((friendship) => {
+  const userFriends = friends.flatMap((friendship: any) => {
     const isSender = friendship.sender.id === userId;
     const friend = isSender ? friendship.receiver : friendship.sender;
 
