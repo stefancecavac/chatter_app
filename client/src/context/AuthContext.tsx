@@ -142,7 +142,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
   const connectSocket = () => {
     if (!user?.id || socket?.connected) return;
 
-    const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
+    const newSocket = io(import.meta.env.BASE_URL, {
       query: {
         userId: user.id,
       },
