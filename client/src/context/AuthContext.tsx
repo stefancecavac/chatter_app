@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { getCurrentUserApi, loginUserApi, logoutCurrentUserApi, registerUserApi, updateUserApi, updateUserPrivacyApi } from "../api/AuthApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { InternalAxiosRequestConfig } from "axios";
-import { LoginData, RegisterData, responseMessageData, UpdateUserData, userData } from "../util/Types";
+import { LoginData, RegisterData, UpdateUserData, userData } from "../util/Types";
 import { io, Socket } from "socket.io-client";
 import { ApiClient } from "../util/ClientApi";
 
@@ -142,7 +142,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
   const connectSocket = () => {
     if (!user?.id || socket?.connected) return;
 
-    const newSocket = io("http://localhost:4000", {
+    const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
       query: {
         userId: user.id,
       },
@@ -155,9 +155,22 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     });
 
     newSocket.on("newMessage", (message) => {
-      queryClient.setQueryData(["chat", message.senderId], (oldMessages: responseMessageData) => {
-        const updatedMessages = oldMessages?.messages ? [...oldMessages.messages, message] : [message];
-        return { ...oldMessages, messages: updatedMessages };
+      queryClient.setQueryData(["chat", message.senderId], (oldMessages: any) => {
+        if (!oldMessages) return;
+
+        return {
+          ...oldMessages,
+          pages: oldMessages.pages.map((page: any, index: number) => {
+            if (index == 0) {
+              return {
+                ...page,
+                messages: [...page.messages, message],
+                lastMessage: message,
+              };
+            }
+            return page;
+          }),
+        };
       });
 
       queryClient.setQueryData(["chats"], (oldChats: userData[]) => {

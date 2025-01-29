@@ -82,6 +82,8 @@ export const useSendMessageToUser = () => {
         };
       });
 
+      console.log(queryClient.getQueryData(["chat", receiverId]));
+
       queryClient.setQueryData(["chats"], (oldChats: userData[]) => {
         const updatedChats = oldChats.map((chat) => (chat.id === data.receiverId ? { ...chat, lastMessage: data } : chat));
 
