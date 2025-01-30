@@ -21,8 +21,6 @@ export const SearchPage = () => {
     handleSearchParams(e);
   };
 
-  console.log(debounceLoading);
-
   return (
     <div className="w-full flex flex-col p-5">
       <div className="flex items-center gap-5 ">

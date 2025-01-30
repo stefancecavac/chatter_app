@@ -35,7 +35,6 @@ export const ChatPage = () => {
     messageEndRef.current.scrollIntoView({ behavior: "instant" });
   }, [buttonVisible, messages]);
 
-  console.log(messages);
   return (
     <div className="w-full flex flex-col relative">
       <ChatHeader chatUser={chatUser} chatLoading={chatLoading}></ChatHeader>
