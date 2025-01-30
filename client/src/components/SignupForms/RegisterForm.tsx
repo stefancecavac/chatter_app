@@ -76,9 +76,7 @@ export const RegisterForm: React.FC<registerFormProps> = ({ setToggleForm }) => 
           {registerPending ? "Registering ... " : "Sign Up"}
         </button>
 
-        <div className="relative  border-t-2 border-info-content  my-5 flex items-center justify-center ">
-          <p className="-top-3 absolute bg-base-100 px-1  text-info-content">Or</p>
-        </div>
+        <div className="divider  text-info-content">Or</div>
 
         <button onClick={() => setToggleForm(false)} type="button" className="btn btn-primary btn-outline btn-sm  ">
           Log in
