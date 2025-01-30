@@ -9,7 +9,7 @@ import { UseObserverHook } from "../hooks/UseObserverHook";
 
 export const ChatPage = () => {
   const { user } = UseAuthContext();
-  const { messages, lastMessage, chatUser, chatLoading, chatError, fetchNextPage, hasNextPage } = useGetChatWitFriend();
+  const { messages, lastMessage, chatUser, chatLoading, chatError, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetChatWitFriend();
   const { receiverId } = useParams();
   const { markMessageAsRead } = useMarkMessageAsRead();
   const { buttonVisible, observerRef } = UseObserverHook({ hasNextPage });
@@ -29,11 +29,13 @@ export const ChatPage = () => {
     }
   }, [receiverId, user?.id, lastMessage?.receiverId]);
 
-  // useEffect(() => {
-  //   if (!messageEndRef.current) return;
-  //   messageEndRef.current.scrollIntoView({ behavior: "instant" });
-  // }, [messageEndRef.current]);
+  useEffect(() => {
+    if (!messageEndRef.current) return;
+    if (buttonVisible) return;
+    messageEndRef.current.scrollIntoView({ behavior: "instant" });
+  }, [buttonVisible, messages]);
 
+  console.log(messages);
   return (
     <div className="w-full flex flex-col relative">
       <ChatHeader chatUser={chatUser} chatLoading={chatLoading}></ChatHeader>
@@ -42,10 +44,11 @@ export const ChatPage = () => {
         <div className="relaitve" ref={observerRef}></div>
         {buttonVisible && (
           <button
+            disabled={isFetchingNextPage}
             className="absolute btn top-16 mx-20 left-0 right-0 z-20 bg-opacity-50 hover:bg-opacity-50 text-xs font-normal btn-sm"
             onClick={() => fetchNextPage()}
           >
-            Load more
+            {isFetchingNextPage ? <span className="loading loading-spinner text-primary"></span> : "Load more"}
           </button>
         )}
 

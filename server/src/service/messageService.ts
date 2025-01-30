@@ -118,7 +118,7 @@ export const getMessageWithChaterService = async ({
     where: { OR: [{ receiverId: receiverId }, { senderId: receiverId }] },
   });
 
-  return { lastMessage, chatUser, messages: messages.reverse(), hasMore: skip + take < totalMessages };
+  return { lastMessage, chatUser, messages: messages, hasMore: skip + take < totalMessages };
 };
 
 export const sendMessageToChatterService = async ({ receiverId, userId, content }: { receiverId: string; userId: string; content: string }) => {

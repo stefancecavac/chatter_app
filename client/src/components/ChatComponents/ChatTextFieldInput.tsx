@@ -22,6 +22,13 @@ export const ChatTextFieldInput = () => {
     reset();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (!textAreaEmpty) handleSubmit(sendMessage)();
+    }
+  };
+
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
     if (textarea.value.length >= 1) {
@@ -41,6 +48,7 @@ export const ChatTextFieldInput = () => {
         className="w-full resize-none text-base-content  rounded textarea textarea-xs  place-content-center px-4 text-sm  "
         placeholder="Type your message here..."
         onInput={handleInput}
+        onKeyDown={handleKeyDown}
       ></textarea>
       {errors.content?.message && <span className="text-xs text-error absolute -top-5">{errors.content.message}</span>}
 

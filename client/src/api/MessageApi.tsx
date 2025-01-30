@@ -11,7 +11,7 @@ type customError = {
 
 export const useGetChatWitFriend = () => {
   const { receiverId } = useParams();
-  const takeParam = 10;
+  const takeParam = 20;
 
   const getChatWithFriendApi = async ({ pageParam = 0 }: { pageParam: number }) => {
     const response = await ApiClient.get(`/message/${receiverId}`, {
@@ -34,15 +34,17 @@ export const useGetChatWitFriend = () => {
     queryKey: ["chat", receiverId],
     queryFn: ({ pageParam }) => getChatWithFriendApi({ pageParam: pageParam as number }),
     getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.messages.length < 10) return undefined;
+      if (!lastPage || lastPage.messages.length < takeParam) return undefined;
       return allPages.flatMap((page) => page.messages).length;
     },
     initialPageParam: 0,
+    enabled: !!receiverId,
   });
+
   return {
-    chatUser: data?.pages[0].chatUser as userData,
-    messages: data?.pages.flatMap((page) => page.messages || []).flat() as messageData[],
-    lastMessage: data?.pages[0].lastMessage as messageData,
+    chatUser: data?.pages?.[0]?.chatUser as userData,
+    messages: data?.pages ? data.pages.flatMap((page) => page.messages).reverse() : [],
+    lastMessage: data?.pages?.[0]?.lastMessage as messageData,
     chatLoading,
     chatError,
     fetchNextPage,
@@ -73,7 +75,7 @@ export const useSendMessageToUser = () => {
             if (index == 0) {
               return {
                 ...page,
-                messages: [...page.messages, data],
+                messages: [data, ...page.messages],
                 lastMessage: data,
               };
             }

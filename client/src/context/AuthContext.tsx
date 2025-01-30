@@ -6,6 +6,8 @@ import { LoginData, RegisterData, UpdateUserData, userData } from "../util/Types
 import { io, Socket } from "socket.io-client";
 import { ApiClient } from "../util/ClientApi";
 
+const SOCKET_URL = import.meta.env.MODE === "development" ? "http://localhost:4000" : import.meta.env.BASE_URL;
+
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
@@ -142,7 +144,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
   const connectSocket = () => {
     if (!user?.id || socket?.connected) return;
 
-    const newSocket = io(import.meta.env.BASE_URL, {
+    const newSocket = io(SOCKET_URL, {
       query: {
         userId: user.id,
       },
