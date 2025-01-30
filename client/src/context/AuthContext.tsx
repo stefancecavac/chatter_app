@@ -166,7 +166,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
             if (index == 0) {
               return {
                 ...page,
-                messages: [...page.messages, message],
+                messages: [message, ...page.messages],
                 lastMessage: message,
               };
             }
